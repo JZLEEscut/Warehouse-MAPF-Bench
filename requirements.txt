@@ -1,5 +1,2 @@
--e .
-matplotlib>=3.8
-pandas>=2.1
-pillow>=10.0
-pytest>=8.0
+# Convenience wrapper; dependency versions live only in pyproject.toml.
+-e .[dev]

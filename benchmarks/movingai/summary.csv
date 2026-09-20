@@ -1,0 +1,7 @@
+source,map_id,num_agents,algorithm,attempted_instances,solved_instances,valid_instances,timed_out_instances,success_rate,valid_rate,timeout_rate,median_runtime_ms_all_attempts,mean_runtime_ms_all_attempts,outcome_solved,outcome_timeout,outcome_no_solution,outcome_no_solution_within_limits,outcome_error
+movingai,warehouse-10-20-10-2-1.map,5,cbs,3,3,3,0,1.0,1.0,0.0,150.447,119.02866666666667,3,0,0,0,0
+movingai,warehouse-10-20-10-2-1.map,5,independent_astar,3,3,2,0,1.0,0.6666666666666666,0.0,26.979,53.865,3,0,0,0,0
+movingai,warehouse-10-20-10-2-1.map,5,prioritized,3,3,3,0,1.0,1.0,0.0,407.663,402.6326666666667,3,0,0,0,0
+movingai,warehouse-10-20-10-2-1.map,10,cbs,3,3,3,0,1.0,1.0,0.0,158.377,163.198,3,0,0,0,0
+movingai,warehouse-10-20-10-2-1.map,10,independent_astar,3,3,1,0,1.0,0.3333333333333333,0.0,80.739,90.78533333333333,3,0,0,0,0
+movingai,warehouse-10-20-10-2-1.map,10,prioritized,3,3,3,0,1.0,1.0,0.0,1498.984,1612.5506666666668,3,0,0,0,0

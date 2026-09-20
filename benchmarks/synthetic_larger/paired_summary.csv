@@ -1,0 +1,5 @@
+source,map_id,num_agents,algorithm_a,algorithm_b,attempted_instances,valid_instances_a,valid_instances_b,paired_valid_instances,median_soc_a_paired,median_soc_b_paired,median_soc_delta_a_minus_b,median_makespan_a_paired,median_makespan_b_paired,median_makespan_delta_a_minus_b
+synthetic,synthetic-warehouse-18x28,5,prioritized,cbs,10,10,10,10,78.0,75.5,0.0,24.5,24.5,0.0
+synthetic,synthetic-warehouse-18x28,10,prioritized,cbs,10,10,10,10,158.5,157.0,0.0,30.0,30.0,0.0
+synthetic,synthetic-warehouse-18x28,15,prioritized,cbs,10,10,6,6,241.5,235.0,7.5,29.5,29.5,0.0
+synthetic,synthetic-warehouse-18x28,20,prioritized,cbs,10,10,1,1,281.0,268.0,13.0,27.0,27.0,0.0

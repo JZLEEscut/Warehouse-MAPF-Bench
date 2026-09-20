@@ -1,0 +1,8 @@
+{
+  "source": "deterministic synthetic warehouse generator",
+  "map_id": "synthetic-warehouse-18x28",
+  "agent_counts": [5, 10, 15, 20],
+  "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "cbs_timeout_seconds": 1.5,
+  "command": "python -m warehouse_mapf.benchmark --larger"
+}

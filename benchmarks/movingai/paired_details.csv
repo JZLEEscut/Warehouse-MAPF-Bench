@@ -1,0 +1,7 @@
+source,map_id,num_agents,instance_id,scenario_id,selection_row_ids,algorithm_a,algorithm_b,soc_a,soc_b,soc_delta_a_minus_b,makespan_a,makespan_b,makespan_delta_a_minus_b
+movingai,warehouse-10-20-10-2-1.map,5,"movingai:warehouse-10-20-10-2-1:n5:selection0:rows-127,100,412,415,331",warehouse-10-20-10-2-1-even-1.scen:selection-0,"127,100,412,415,331",prioritized,cbs,642,642,0,200,200,0
+movingai,warehouse-10-20-10-2-1.map,5,"movingai:warehouse-10-20-10-2-1:n5:selection1:rows-31,160,202,23,352",warehouse-10-20-10-2-1-even-1.scen:selection-1,"31,160,202,23,352",prioritized,cbs,533,533,0,166,166,0
+movingai,warehouse-10-20-10-2-1.map,5,"movingai:warehouse-10-20-10-2-1:n5:selection2:rows-215,373,323,138,328",warehouse-10-20-10-2-1-even-1.scen:selection-2,"215,373,323,138,328",prioritized,cbs,346,346,0,126,126,0
+movingai,warehouse-10-20-10-2-1.map,10,"movingai:warehouse-10-20-10-2-1:n10:selection0:rows-127,100,412,415,331,28,306,225,125,38",warehouse-10-20-10-2-1-even-1.scen:selection-0,"127,100,412,415,331,28,306,225,125,38",prioritized,cbs,1173,1173,0,200,200,0
+movingai,warehouse-10-20-10-2-1.map,10,"movingai:warehouse-10-20-10-2-1:n10:selection1:rows-31,160,202,23,352,288,286,3,69,353",warehouse-10-20-10-2-1-even-1.scen:selection-1,"31,160,202,23,352,288,286,3,69,353",prioritized,cbs,976,976,0,166,166,0
+movingai,warehouse-10-20-10-2-1.map,10,"movingai:warehouse-10-20-10-2-1:n10:selection2:rows-215,373,323,138,328,295,254,68,119,40",warehouse-10-20-10-2-1-even-1.scen:selection-2,"215,373,323,138,328,295,254,68,119,40",prioritized,cbs,609,609,0,126,126,0

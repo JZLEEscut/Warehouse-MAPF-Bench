@@ -1,18 +1,17 @@
-# Warehouse-MAPF-Bench
+# Warehouse-MAPF-Bench v0.2
 
-**自动化仓储多智能体路径规划算法基准 / Benchmarking Multi-Agent Path Finding Algorithms in Automated Warehouses**
+**自动化仓储多智能体路径规划的可复现配对基准 / A reproducible paired benchmark for warehouse Multi-Agent Path Finding**
 
 [中文](#中文说明) · [English](#english)
 
-一个紧凑、可复现的 Python 算法工程项目，实现并比较 A*、优先级规划和冲突搜索，用于自动化仓储栅格中的多 AGV 无碰撞路径规划。
+本项目在 Python 中自主实现 A*、Space-Time A*、Prioritized Planning 和 Conflict-Based Search（CBS），并使用独立验证器、明确的结果分类、配对有效实例统计，以及合成仓储和官方 Moving AI 仓储数据进行可复现实验。
 
-A compact, reproducible Python implementation and benchmark of A*, Prioritized Planning, and Conflict-Based Search for collision-free multi-AGV routing on warehouse grids.
+This project implements A*, Space-Time A*, Prioritized Planning, and Conflict-Based Search (CBS) locally in Python, with independent validation, explicit outcome categories, paired-valid quality analysis, and reproducible synthetic plus official Moving AI warehouse experiments.
 
 ![Warehouse MAPF demo](assets/demo.gif)
 
-动画由优先级规划算法的真实输出生成：8 台 AGV、18 × 28 确定性合成仓储地图、随机种子 17，所有轨迹均通过独立验证。
-
-The animation is generated from validated Prioritized Planning paths for 8 AGVs on a deterministic 18 × 28 synthetic warehouse map with seed 17.
+动画来自 8 台 AGV 的真实、已验证 Prioritized Planning 解，而非预设轨迹。
+The animation is rendered from a real, independently validated 8-agent Prioritized Planning solution.
 
 ---
 
@@ -20,92 +19,113 @@ The animation is generated from validated Prioritized Planning paths for 8 AGVs 
 
 ### 为什么需要 MAPF？
 
-为每台 AGV 独立计算最短路径并不足够，因为同步运动时可能出现：
+为每台 AGV 独立计算最短路径会产生两类同步冲突：两台 AGV 同时占据一个栅格的**顶点冲突**，以及同时交换相邻栅格的**边交换冲突**。MAPF 在空间和离散时间上联合规划，并将 AGV 到达后的目标点视为持续占用。
 
-- **顶点冲突**：两台 AGV 在同一时刻占据同一栅格；
-- **边交换冲突**：两台 AGV 在同一时刻交换相邻栅格。
+### 算法与正确性边界
 
-多智能体路径规划（MAPF）同时在空间和离散时间上规划，从而显式避免这些冲突。
+| 算法 | 冲突感知 | 用途与限制 |
+| --- | --- | --- |
+| Independent A* | 否 | 不可行基线；保留并报告冲突 |
+| Prioritized Planning | 是 | 快速但不完备，依赖智能体顺序 |
+| CBS | 是 | 标准约束树搜索；超时、扩展上限和有限 horizon 会限制求解结论 |
 
-### 已实现算法
+CBS 将一个绝对 deadline 传递到高层和底层搜索。只有完整返回全部路径才算 `success`；随后还必须通过独立验证才能算 `valid`。超时或 cutoff 的运行不声称全局最优。
 
-| 算法 | 感知多智能体冲突 | 说明 | 定位 |
-| --- | --- | --- | --- |
-| Independent A* | 否 | 为每台 AGV 独立计算静态最短路径，保留产生的冲突 | 朴素基线 |
-| Prioritized Planning | 是 | 按顺序规划并预留已有轨迹；不完备且依赖优先级 | 快速启发式方法 |
-| Conflict-Based Search（CBS） | 是 | 标准约束树分裂，底层使用 Space-Time A* | 小规模精确式基线 |
+### 运行结果语义
 
-Space-Time A* 搜索状态为 `(行, 列, 时间)`，支持 `WAIT`、顶点约束和有向边约束，并使用有限时间范围避免无限扩展等待状态。
+- `outcome`：`solved`、`timeout`、`no_solution`、`no_solution_within_limits` 或 `error`；
+- `success`：在限制前返回了全部智能体的完整路径；
+- `valid`：`success=True` 且独立验证通过起终点、障碍物、合法移动、顶点冲突、边交换和目标点持续占用；
+- `timed_out`：仅在 `outcome=timeout` 时为真；
+- `runtime_ms`：每一次尝试的墙钟时间，失败和超时同样保留；
+- `instance_id`：包含地图、智能体规模、seed/selection，以及 Moving AI 精确场景行号的稳定标识。
+
+受约束搜索未在有限 horizon/扩展限制内找到路径时，保守标记为 `no_solution_within_limits`，不宣称数学意义上的不可解。
+
+### 配对质量比较
+
+CBS 与 Prioritized Planning 的 SOC/makespan 只在**相同 instance_id 且两者都 valid**的交集上比较：
 
 ```text
-场景 Scenario
-   ├── Independent A*
-   ├── Prioritized Planning ── Space-Time A*
-   └── CBS ─────────────────── Space-Time A*
-             │
-             ▼
-          独立验证
-             │
-             ▼
-      指标 / CSV / 图表 / GIF
+SOC delta = SOC(Prioritized) - SOC(CBS)
 ```
 
-### 快速开始
+正值表示 CBS 的 SOC 更低。所有表和图都同时显示 `paired_valid_instances`；没有共同有效实例时质量指标为 `N/A`，不是 0。
+
+### 安装、测试与实验命令
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 pytest -q
 python -m warehouse_mapf.demo
+
+# 快速 smoke：5/10/15 agents × 5 seeds，CBS 0.6 s
 python -m warehouse_mapf.benchmark --quick
+
+# 较大合成实验：5/10/15/20 agents × 10 seeds，CBS 1.5 s
+python -m warehouse_mapf.benchmark --larger
+
+# 官方 Moving AI 仓储子集
+python -m warehouse_mapf.standard_benchmark \
+  --map data/movingai/warehouse-10-20-10-2-1.map \
+  --scen data/movingai/warehouse-10-20-10-2-1-even-1.scen \
+  --agents 5 10 --selection-seeds 0 1 2 --cbs-timeout 0.6
 ```
 
-### 基准实验方法
+### 较大合成实验结果
 
-仓库中已提交的 quick benchmark 使用 5、10、15 台 AGV，每个规模运行 5 个随机种子（0–4），共得到 45 条真实测量记录。对于每一个 `(AGV 数量, seed)` 组合，三个算法接收完全相同的地图、起点和终点。CBS 每个实例的超时限制为 0.6 秒，失败和超时记录均保留在 CSV 中。
+配置：18 × 28 确定性合成仓储地图，5/10/15/20 台 AGV，每个规模 seeds 0–9，共 120 次算法尝试。运行级数据、汇总和配对明细位于 [`benchmarks/synthetic_larger/`](benchmarks/synthetic_larger/)。
 
-`success` 表示求解器返回了所有 AGV 的路径；`valid` 还要求独立验证器确认起终点、移动合法性、障碍物规避，以及不存在顶点冲突和边交换冲突。运行时间对全部运行聚合，路径质量只对成功且有效的解聚合。
+合成 larger 实验与官方 Moving AI 子集还被合并为 [`benchmarks/v0_2_study/`](benchmarks/v0_2_study/) 中的 138 次完整研究记录；该目录的 manifest 指向两个原始结果文件，所有派生表均可重新计算。
 
-| 算法 | AGV 数 | 运行数 | 成功率 | 有效率 | 中位运行时间（ms） | 有效解中位成本 | 平均冲突数 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| CBS | 5 | 5 | 1.0 | 1.0 | 5.262 | 74.0 | 0.0 |
-| CBS | 10 | 5 | 1.0 | 1.0 | 40.098 | 164.0 | 0.0 |
-| CBS | 15 | 5 | 0.4 | 0.4 | 602.282 | 221.0 | 0.0 |
-| Independent A* | 5 | 5 | 1.0 | 0.6 | 2.069 | 69.0 | 0.4 |
-| Independent A* | 10 | 5 | 1.0 | 0.2 | 5.685 | 143.0 | 2.8 |
-| Independent A* | 15 | 5 | 1.0 | 0.0 | 9.493 | — | 6.4 |
-| Prioritized Planning | 5 | 5 | 1.0 | 1.0 | 11.479 | 74.0 | 0.0 |
-| Prioritized Planning | 10 | 5 | 1.0 | 1.0 | 56.218 | 174.0 | 0.0 |
-| Prioritized Planning | 15 | 5 | 1.0 | 1.0 | 134.573 | 255.0 | 0.0 |
+全部尝试的 success/valid/timeout：
 
-原始数据位于 [`benchmarks/results.csv`](benchmarks/results.csv)，聚合结果位于 [`benchmarks/summary.csv`](benchmarks/summary.csv)。15 台 AGV 的 CBS 实验中有 3 次超时，这些记录被完整保留。
+| AGV 数 | Independent success/valid | Prioritized success/valid | CBS success/valid/timeout |
+| ---: | ---: | ---: | ---: |
+| 5 | 10/6 | 10/10 | 10/10/0 |
+| 10 | 10/1 | 10/10 | 10/10/0 |
+| 15 | 10/0 | 10/10 | 6/6/4 |
+| 20 | 10/0 | 10/10 | 1/1/9 |
 
-![运行时间与 AGV 数量](assets/runtime_vs_agents.png)
+仅共同有效实例的质量比较：
 
-![路径成本与 AGV 数量](assets/cost_vs_agents.png)
+| AGV 数 | 配对有效 n | 配对 SOC：Prioritized | 配对 SOC：CBS | 中位逐实例 ΔSOC |
+| ---: | ---: | ---: | ---: | ---: |
+| 5 | 10 | 78.0 | 75.5 | 0.0 |
+| 10 | 10 | 158.5 | 157.0 | 0.0 |
+| 15 | 6 | 241.5 | 235.0 | +7.5 |
+| 20 | 1 | 281.0 | 268.0 | +13.0 |
 
-在本次 quick benchmark 中，Prioritized Planning 在全部 15 个配对实例上均返回有效解。CBS 在 10 台 AGV 时获得了比 Prioritized Planning 更低的中位路径成本（164 对 174），但在 15 台 AGV 时仅有 2/5 的实例在限制时间内求解成功。Independent A* 速度最快，但随着 AGV 数量增加更容易产生冲突，因此没有纳入可行多智能体解的成本图。
+![All-attempt runtime](assets/synthetic_larger_runtime_all_attempts.png)
 
-### 正确性保障
+![All-attempt validity](assets/synthetic_larger_valid_rate_all_attempts.png)
 
-测试覆盖静态 A* 最短路径、障碍物和不可达目标、顶点冲突、边交换冲突、目标点持续占用、Space-Time A* 约束等待与未来目标约束、Prioritized Planning、CBS、独立解验证和确定性场景生成。benchmark 结果只有在通过独立验证后才会被标记为有效。
+![Paired-valid SOC](assets/synthetic_larger_paired_soc.png)
 
-### 仓库结构
+谨慎结论：在这组数据上，Prioritized Planning 的 40 个运行全部有效；CBS 随规模增大出现大量超时。15 台 AGV 的 `+7.5` 来自 6 个共同有效实例，20 台的 `+13` 仅来自 1 个实例，不能推广到全部实例，更不能据此宣称工业性能或超时运行的最优性。
 
-```text
-src/warehouse_mapf/   算法、验证器、场景、命令行与可视化
-tests/                正确性与集成测试
-benchmarks/           逐次运行与聚合 CSV
-assets/               GIF 动画与实验图表
-docs/                 算法和实验说明
-```
+### 官方 Moving AI 仓储数据
+
+项目实际运行了官方 `warehouse-10-20-10-2-1.map`（161 × 63）和 `warehouse-10-20-10-2-1-even-1.scen`。每个规模用 selection seeds 0、1、2 确定性选择不重复起点/终点，精确行号记录在 [`selection_manifest.json`](benchmarks/movingai/selection_manifest.json)。
+
+| AGV 数 | 每算法尝试 | Prioritized 有效 | CBS 有效 | 配对有效 n | 配对中位 SOC（两者） | 中位 ΔSOC |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 5 | 3 | 3 | 3 | 3 | 533.0 | 0.0 |
+| 10 | 3 | 3 | 3 | 3 | 976.0 | 0.0 |
+
+数据来源、官方 URL、获取日期、许可证说明和选择规则见 [`data/movingai/README.md`](data/movingai/README.md)。Moving AI 页面声明数据采用 Open Data Commons Attribution License。该小规模结果只证明解析、选择、验证和报告流程可复现。
+
+### 测试与 CI
+
+测试覆盖：A*、冲突检测、目标点持续占用、Space-Time A* 约束、已知最优 SOC、三智能体级联冲突、不可能实例、确定性 CBS 超时、报告选择偏差回归、Moving AI 格式/坐标/异常数据，以及确定性场景选择。GitHub Actions 在 Python 3.11 和 3.12 上从 `pyproject.toml` 的 `[dev]` extra 安装并运行 `pytest -q`。
 
 ### 局限性
 
-- 离散栅格模型不包含加速度、转弯半径和连续空间避碰；
-- 项目只处理路径规划，不包含任务分配、调度、充电和仓库控制；
-- Prioritized Planning 不完备，结果依赖智能体顺序；
-- CBS 在困难或大规模实例上的运行时间扩展较差；
-- 当前场景是确定性合成仓储地图，并非真实运营数据。
+- 离散栅格不建模加速度、转弯半径和连续空间避碰；
+- 只研究路径规划，不包含任务分配、调度、充电或仓库控制；
+- Prioritized Planning 不完备且依赖顺序；
+- CBS 使用有限 horizon、deadline 和扩展上限，大规模失败不等于不可解；
+- 实验规模用于方法学和复现，不代表工业仓库吞吐性能。
 
 ---
 
@@ -113,83 +133,75 @@ docs/                 算法和实验说明
 
 ### Why MAPF?
 
-Independent shortest paths are insufficient because synchronous AGV movement can produce:
+Independent shortest paths can cause a **vertex conflict** when two AGVs occupy one cell simultaneously, or an **edge-swap conflict** when they exchange adjacent cells. MAPF plans jointly in space and discrete time, including held-goal occupancy after arrival.
 
-- a **vertex conflict**, where two AGVs occupy one cell at the same timestep;
-- an **edge-swap conflict**, where two AGVs exchange adjacent cells simultaneously.
+### Algorithms and correctness boundary
 
-Multi-Agent Path Finding plans in both space and discrete time to avoid these conflicts explicitly.
+| Algorithm | Conflict aware | Role and limitation |
+| --- | --- | --- |
+| Independent A* | No | Infeasible baseline; conflicts remain visible |
+| Prioritized Planning | Yes | Fast, incomplete, and order-dependent |
+| CBS | Yes | Standard constraint-tree search bounded by deadline, expansion limit, and finite horizon |
 
-### Implemented algorithms
+CBS shares one absolute deadline across high- and low-level searches. `success` requires a complete returned path set; `valid` additionally requires independent validation. Timed-out or cutoff runs carry no global-optimality claim.
 
-| Algorithm | Conflict aware | Notes | Role |
-| --- | --- | --- | --- |
-| Independent A* | No | Static shortest paths per AGV; conflicts are retained | Naive baseline |
-| Prioritized Planning | Yes | Sequential reservations; incomplete and order-dependent | Fast heuristic |
-| Conflict-Based Search (CBS) | Yes | Standard constraint-tree branching with Space-Time A* | Small-instance exact-style baseline |
+### Outcome semantics
 
-Space-Time A* searches `(row, column, time)`, supports `WAIT`, vertex constraints, and directed edge constraints, and uses a finite horizon to bound wait-state expansion.
+- `outcome`: `solved`, `timeout`, `no_solution`, `no_solution_within_limits`, or `error`;
+- `success`: all agent paths returned before the configured limit;
+- `valid`: successful output that passes endpoints, obstacles, legal moves, vertex conflicts, edge swaps, and goal-holding checks;
+- `timed_out`: true exactly for a time-limit exit;
+- `runtime_ms`: wall-clock duration for every attempt, including failures;
+- `instance_id`: stable map/scale/seed-or-selection identity, including exact Moving AI row IDs.
 
-### Quick start
+Finite-horizon or cutoff exhaustion is conservatively reported as `no_solution_within_limits`, not as a proof of impossibility.
+
+### Paired quality methodology
+
+CBS and Prioritized Planning SOC/makespan are compared only on identical instance IDs where **both outputs validate**. The per-instance convention is `SOC(Prioritized) - SOC(CBS)`, so a positive delta favors CBS. Every quality result includes its paired sample count; an empty intersection is `N/A`.
+
+### Commands
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 pytest -q
 python -m warehouse_mapf.demo
 python -m warehouse_mapf.benchmark --quick
+python -m warehouse_mapf.benchmark --larger
+python -m warehouse_mapf.standard_benchmark \
+  --map data/movingai/warehouse-10-20-10-2-1.map \
+  --scen data/movingai/warehouse-10-20-10-2-1-even-1.scen \
+  --agents 5 10 --selection-seeds 0 1 2 --cbs-timeout 0.6
 ```
 
-### Benchmark methodology
+### Recorded findings
 
-The checked-in quick benchmark uses 5, 10, and 15 agents with five seeds (0–4), producing 45 measured runs. All three algorithms receive the same map, starts, and goals for each `(agent count, seed)` pair. CBS has a 0.6-second per-instance timeout; failures and timeouts remain in the CSV.
+The larger synthetic experiment contains 120 attempts over 5/10/15/20 agents and seeds 0–9. Prioritized Planning validated on all 40 instances. CBS validated on 10/10, 10/10, 6/10, and 1/10 instances respectively, with 4 timeouts at 15 agents and 9 at 20 agents. Paired-valid sample counts are therefore 10, 10, 6, and 1—not the full denominator at the larger scales. Median per-instance SOC deltas are 0, 0, +7.5, and +13; the last value is based on one instance and is not a general quality claim.
 
-`success` means that the solver returned every path. `valid` additionally requires the independent validator to confirm endpoints, legal motion, obstacle avoidance, and zero vertex or edge-swap conflicts. Runtime is aggregated over all runs, while path quality uses successful and valid solutions only.
-
-| Algorithm | Agents | Runs | Success | Valid | Median runtime (ms) | Median valid cost | Mean conflicts |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| CBS | 5 | 5 | 1.0 | 1.0 | 5.262 | 74.0 | 0.0 |
-| CBS | 10 | 5 | 1.0 | 1.0 | 40.098 | 164.0 | 0.0 |
-| CBS | 15 | 5 | 0.4 | 0.4 | 602.282 | 221.0 | 0.0 |
-| Independent A* | 5 | 5 | 1.0 | 0.6 | 2.069 | 69.0 | 0.4 |
-| Independent A* | 10 | 5 | 1.0 | 0.2 | 5.685 | 143.0 | 2.8 |
-| Independent A* | 15 | 5 | 1.0 | 0.0 | 9.493 | — | 6.4 |
-| Prioritized Planning | 5 | 5 | 1.0 | 1.0 | 11.479 | 74.0 | 0.0 |
-| Prioritized Planning | 10 | 5 | 1.0 | 1.0 | 56.218 | 174.0 | 0.0 |
-| Prioritized Planning | 15 | 5 | 1.0 | 1.0 | 134.573 | 255.0 | 0.0 |
-
-Run-level data are available in [`benchmarks/results.csv`](benchmarks/results.csv), with aggregates in [`benchmarks/summary.csv`](benchmarks/summary.csv). Three 15-agent CBS runs timed out and remain in the reported data and rates.
-
-On this quick benchmark, Prioritized Planning returned valid solutions for all 15 paired instances. CBS achieved a lower median path cost than Prioritized Planning at 10 agents (164 versus 174), but solved only 2 of 5 instances at 15 agents within the configured limit. Independent A* is fastest but increasingly conflict-prone, so it is excluded from the feasible multi-agent cost chart.
-
-### Correctness
-
-The test suite covers static A* shortest paths, obstacles, unreachable goals, vertex conflicts, edge swaps, goal holding, constrained waits, future goal constraints, Prioritized Planning, CBS, independent validation, and deterministic scenario generation. Benchmark results are marked valid only after independent validation.
+The official Moving AI run uses the 161 × 63 `warehouse-10-20-10-2-1` map and one complete official even scenario file. Three deterministic selections at each of 5 and 10 agents produced 3 paired-valid instances per scale; median SOC was equal between CBS and Prioritized Planning on both small subsets. Exact selected rows and provenance are committed.
 
 ### Repository layout
 
 ```text
-src/warehouse_mapf/   algorithms, validation, scenarios, CLI, visualization
-tests/                correctness and integration tests
-benchmarks/           run-level and aggregate CSVs
-assets/               generated GIF and benchmark plots
-docs/                 algorithm and experiment notes
+src/warehouse_mapf/          algorithms, parsers, validation, reporting, CLIs
+tests/                       correctness, parser, timeout, and reporting tests
+data/movingai/               official map/scenario subset and provenance
+benchmarks/smoke/            smoke raw and derived results
+benchmarks/synthetic_larger/ larger raw and paired results
+benchmarks/movingai/         official-data results and selection manifest
+benchmarks/v0_2_study/       combined 138-attempt v0.2 study tables
+assets/                      GIF and outcome/paired-quality plots
 ```
 
 ### Limitations
 
-- The discrete grid model does not represent acceleration, turning radius, or continuous collision avoidance.
-- The project addresses routing, not task assignment, scheduling, charging, or warehouse control.
-- Prioritized Planning is incomplete and depends on agent ordering.
-- CBS runtime scales poorly on difficult or larger instances.
-- The scenarios are deterministic synthetic warehouse layouts, not operational telemetry.
+- The discrete grid omits acceleration, turning radius, and continuous collision avoidance.
+- This is routing only, without assignment, scheduling, charging, or warehouse control.
+- Prioritized Planning is incomplete and order-dependent.
+- CBS uses finite horizons and resource limits; failure at scale is not a proof of unsolvability.
+- These experiments demonstrate reproducibility and methodology, not industrial throughput.
 
 ## References / 参考资料
 
-- Stern et al., *Multi-Agent Pathfinding: Definitions, Variants, and Benchmarks*, SoCS 2019. [Moving AI MAPF benchmarks](https://www.movingai.com/benchmarks/mapf.html)
+- Stern et al., *Multi-Agent Pathfinding: Definitions, Variants, and Benchmarks*, SoCS 2019. [Moving AI MAPF Benchmarks](https://www.movingai.com/benchmarks/mapf/)
 - Sharon et al., *Conflict-Based Search for Optimal Multi-Agent Pathfinding*, Artificial Intelligence 219, 2015.
-
-## Resume summary / 简历描述
-
-实现了面向仓储 MAPF 的 A*、Space-Time A*、Prioritized Planning 和 Conflict-Based Search；构建了独立碰撞验证器，并在三个 AGV 规模、五个随机种子的配对场景上完成可复现实验，评估运行时间、成功率、有效率、makespan、路径成本和冲突数，同时生成多 AGV 动画。
-
-Implemented A*, Space-Time A*, Prioritized Planning, and Conflict-Based Search for warehouse MAPF; built an independent collision validator and a reproducible paired benchmark across three agent scales and five seeds; evaluated runtime, success, validity, makespan, sum-of-costs, and conflicts while producing an animated multi-AGV visualization.

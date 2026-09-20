@@ -1,0 +1,13 @@
+source,map_id,num_agents,instance_id,scenario_id,selection_row_ids,algorithm_a,algorithm_b,soc_a,soc_b,soc_delta_a_minus_b,makespan_a,makespan_b,makespan_delta_a_minus_b
+synthetic,synthetic-warehouse-18x28,5,synthetic-18x28:n5:seed0,seed-0,-,prioritized,cbs,69.0,69.0,0.0,24.0,24.0,0.0
+synthetic,synthetic-warehouse-18x28,5,synthetic-18x28:n5:seed1,seed-1,-,prioritized,cbs,62.0,62.0,0.0,18.0,18.0,0.0
+synthetic,synthetic-warehouse-18x28,5,synthetic-18x28:n5:seed2,seed-2,-,prioritized,cbs,77.0,77.0,0.0,20.0,20.0,0.0
+synthetic,synthetic-warehouse-18x28,5,synthetic-18x28:n5:seed3,seed-3,-,prioritized,cbs,86.0,86.0,0.0,25.0,25.0,0.0
+synthetic,synthetic-warehouse-18x28,5,synthetic-18x28:n5:seed4,seed-4,-,prioritized,cbs,74.0,74.0,0.0,26.0,26.0,0.0
+synthetic,synthetic-warehouse-18x28,10,synthetic-18x28:n10:seed0,seed-0,-,prioritized,cbs,174.0,164.0,10.0,33.0,33.0,0.0
+synthetic,synthetic-warehouse-18x28,10,synthetic-18x28:n10:seed1,seed-1,-,prioritized,cbs,150.0,150.0,0.0,29.0,29.0,0.0
+synthetic,synthetic-warehouse-18x28,10,synthetic-18x28:n10:seed2,seed-2,-,prioritized,cbs,181.0,167.0,14.0,34.0,34.0,0.0
+synthetic,synthetic-warehouse-18x28,10,synthetic-18x28:n10:seed3,seed-3,-,prioritized,cbs,193.0,181.0,12.0,30.0,30.0,0.0
+synthetic,synthetic-warehouse-18x28,10,synthetic-18x28:n10:seed4,seed-4,-,prioritized,cbs,143.0,143.0,0.0,30.0,30.0,0.0
+synthetic,synthetic-warehouse-18x28,15,synthetic-18x28:n15:seed0,seed-0,-,prioritized,cbs,255.0,255.0,0.0,26.0,26.0,0.0
+synthetic,synthetic-warehouse-18x28,15,synthetic-18x28:n15:seed4,seed-4,-,prioritized,cbs,194.0,187.0,7.0,26.0,25.0,1.0

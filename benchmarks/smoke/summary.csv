@@ -1,0 +1,10 @@
+source,map_id,num_agents,algorithm,attempted_instances,solved_instances,valid_instances,timed_out_instances,success_rate,valid_rate,timeout_rate,median_runtime_ms_all_attempts,mean_runtime_ms_all_attempts,outcome_solved,outcome_timeout,outcome_no_solution,outcome_no_solution_within_limits,outcome_error
+synthetic,synthetic-warehouse-18x28,5,cbs,5,5,5,0,1.0,1.0,0.0,5.755,6.6958,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,5,independent_astar,5,5,3,0,1.0,0.6,0.0,2.106,2.2032,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,5,prioritized,5,5,5,0,1.0,1.0,0.0,11.69,20.671,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,cbs,5,5,5,0,1.0,1.0,0.0,50.572,43.4512,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,independent_astar,5,5,1,0,1.0,0.2,0.0,8.388,7.7876,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,prioritized,5,5,5,0,1.0,1.0,0.0,71.113,71.1038,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,15,cbs,5,2,2,3,0.4,0.4,0.6,600.429,408.92379999999997,2,3,0,0,0
+synthetic,synthetic-warehouse-18x28,15,independent_astar,5,5,0,0,1.0,0.0,0.0,14.738,13.131800000000002,5,0,0,0,0
+synthetic,synthetic-warehouse-18x28,15,prioritized,5,5,5,0,1.0,1.0,0.0,159.311,168.072,5,0,0,0,0

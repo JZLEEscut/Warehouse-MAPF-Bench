@@ -1,0 +1,13 @@
+source,map_id,num_agents,algorithm,attempted_instances,solved_instances,valid_instances,timed_out_instances,success_rate,valid_rate,timeout_rate,median_runtime_ms_all_attempts,mean_runtime_ms_all_attempts,outcome_solved,outcome_timeout,outcome_no_solution,outcome_no_solution_within_limits,outcome_error
+synthetic,synthetic-warehouse-18x28,5,cbs,10,10,10,0,1.0,1.0,0.0,4.9079999999999995,5.896999999999999,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,5,independent_astar,10,10,6,0,1.0,0.6,0.0,2.0165,2.1018999999999997,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,5,prioritized,10,10,10,0,1.0,1.0,0.0,13.8145,16.6867,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,cbs,10,10,10,0,1.0,1.0,0.0,44.0925,136.07919999999996,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,independent_astar,10,10,1,0,1.0,0.1,0.0,6.3740000000000006,6.3932,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,10,prioritized,10,10,10,0,1.0,1.0,0.0,70.2595,70.56469999999999,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,15,cbs,10,6,6,4,0.6,0.6,0.4,1345.785,970.4510999999999,6,4,0,0,0
+synthetic,synthetic-warehouse-18x28,15,independent_astar,10,10,0,0,1.0,0.0,0.0,10.8605,11.318100000000001,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,15,prioritized,10,10,10,0,1.0,1.0,0.0,156.3675,155.15290000000002,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,20,cbs,10,1,1,9,0.1,0.1,0.9,1501.7939999999999,1438.4113000000002,1,9,0,0,0
+synthetic,synthetic-warehouse-18x28,20,independent_astar,10,10,0,0,1.0,0.0,0.0,16.114,16.645500000000002,10,0,0,0,0
+synthetic,synthetic-warehouse-18x28,20,prioritized,10,10,10,0,1.0,1.0,0.0,263.156,271.126,10,0,0,0,0

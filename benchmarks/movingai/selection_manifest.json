@@ -1,0 +1,110 @@
+{
+  "source": "Moving AI MAPF Benchmarks",
+  "official_page": "https://www.movingai.com/benchmarks/mapf/",
+  "license": "Open Data Commons Attribution License (as stated by Moving AI)",
+  "retrieval_date": "2026-09-20",
+  "map_file": "warehouse-10-20-10-2-1.map",
+  "scenario_file": "warehouse-10-20-10-2-1-even-1.scen",
+  "map_url": "https://movingai.com/benchmarks/mapf/warehouse-10-20-10-2-1.map.zip",
+  "scenario_url": "https://movingai.com/benchmarks/mapf/warehouse-10-20-10-2-1.map-scen-even.zip",
+  "selection_strategy": "seeded random permutation followed by unique start/goal filtering",
+  "counts": [
+    5,
+    10
+  ],
+  "selection_seeds": [
+    0,
+    1,
+    2
+  ],
+  "cbs_timeout_seconds": 0.6,
+  "selections": [
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n5:selection0:rows-127,100,412,415,331",
+      "num_agents": 5,
+      "selection_seed": 0,
+      "row_ids": [
+        127,
+        100,
+        412,
+        415,
+        331
+      ]
+    },
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n5:selection1:rows-31,160,202,23,352",
+      "num_agents": 5,
+      "selection_seed": 1,
+      "row_ids": [
+        31,
+        160,
+        202,
+        23,
+        352
+      ]
+    },
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n5:selection2:rows-215,373,323,138,328",
+      "num_agents": 5,
+      "selection_seed": 2,
+      "row_ids": [
+        215,
+        373,
+        323,
+        138,
+        328
+      ]
+    },
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n10:selection0:rows-127,100,412,415,331,28,306,225,125,38",
+      "num_agents": 10,
+      "selection_seed": 0,
+      "row_ids": [
+        127,
+        100,
+        412,
+        415,
+        331,
+        28,
+        306,
+        225,
+        125,
+        38
+      ]
+    },
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n10:selection1:rows-31,160,202,23,352,288,286,3,69,353",
+      "num_agents": 10,
+      "selection_seed": 1,
+      "row_ids": [
+        31,
+        160,
+        202,
+        23,
+        352,
+        288,
+        286,
+        3,
+        69,
+        353
+      ]
+    },
+    {
+      "instance_id": "movingai:warehouse-10-20-10-2-1:n10:selection2:rows-215,373,323,138,328,295,254,68,119,40",
+      "num_agents": 10,
+      "selection_seed": 2,
+      "row_ids": [
+        215,
+        373,
+        323,
+        138,
+        328,
+        295,
+        254,
+        68,
+        119,
+        40
+      ]
+    }
+  ]
+}

@@ -47,7 +47,19 @@ def solve_independent(problem: MAPFProblem) -> Solution:
     for agent in problem.agents:
         path = astar(problem.grid, agent.start, agent.goal)
         if path is None:
-            return Solution(paths, False, (perf_counter() - started) * 1000, {"failure_reason": f"unreachable:{agent.id}"})
+            return Solution(
+                paths=paths,
+                success=False,
+                runtime_ms=(perf_counter() - started) * 1000,
+                metadata={"failure_reason": f"unreachable:{agent.id}"},
+                outcome="no_solution",
+            )
         paths[agent.id] = path
     validation = validate_solution(problem, paths)
-    return Solution(paths, True, (perf_counter() - started) * 1000, {"valid": validation.valid, "conflicts": len(validation.conflicts)})
+    return Solution(
+        paths=paths,
+        success=True,
+        runtime_ms=(perf_counter() - started) * 1000,
+        metadata={"valid": validation.valid, "conflicts": len(validation.conflicts)},
+        outcome="solved",
+    )

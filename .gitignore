@@ -4,3 +4,7 @@ __pycache__/
 .venv/
 *.egg-info/
 warehouse_mapf_codex_handoff/
+data/movingai/*.zip
+data/movingai/scen-even/
+tests/.tmp/*
+!tests/.tmp/.gitkeep

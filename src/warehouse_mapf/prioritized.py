@@ -22,10 +22,22 @@ def solve_prioritized(problem: MAPFProblem, *, max_time: int | None = None) -> S
                 edges.append(EdgeConstraint(agent.id, time, target, source))
         path = space_time_astar(problem.grid, agent.start, agent.goal, vertex_constraints=vertices, edge_constraints=edges, max_time=horizon)
         if path is None:
-            return Solution(paths, False, (perf_counter() - started) * 1000, {"failure_reason": f"no reserved path for {agent.id}"})
+            return Solution(
+                paths=paths,
+                success=False,
+                runtime_ms=(perf_counter() - started) * 1000,
+                metadata={"failure_reason": f"no reserved path for {agent.id}"},
+                outcome="no_solution_within_limits",
+            )
         paths[agent.id] = path
     validation = validate_solution(problem, paths)
-    result = Solution(paths, validation.valid, (perf_counter() - started) * 1000, {"valid": validation.valid, "conflicts": len(validation.conflicts)})
+    result = Solution(
+        paths=paths,
+        success=True,
+        runtime_ms=(perf_counter() - started) * 1000,
+        metadata={"valid": validation.valid, "conflicts": len(validation.conflicts)},
+        outcome="solved",
+    )
     if not validation.valid:
         result.metadata["failure_reason"] = "; ".join(validation.errors)
     return result

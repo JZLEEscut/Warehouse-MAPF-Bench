@@ -3,9 +3,15 @@
 from collections.abc import Collection
 from heapq import heappop, heappush
 from itertools import count
+from time import perf_counter
+from typing import Callable
 from .astar import manhattan
 from .grid import GridMap
 from .models import EdgeConstraint, Position, VertexConstraint
+
+
+class SearchTimeout(RuntimeError):
+    """Raised when a low-level search reaches its shared absolute deadline."""
 
 
 def space_time_astar(
@@ -16,6 +22,8 @@ def space_time_astar(
     vertex_constraints: Collection[VertexConstraint] = (),
     edge_constraints: Collection[EdgeConstraint] = (),
     max_time: int | None = None,
+    deadline: float | None = None,
+    clock: Callable[[], float] = perf_counter,
 ) -> list[Position] | None:
     """Find a constrained path; edge constraints at t forbid t->t+1 moves."""
     if not grid.is_free(start) or not grid.is_free(goal):
@@ -33,6 +41,8 @@ def space_time_astar(
     parents: dict[tuple[Position, int], tuple[Position, int] | None] = {start_state: None}
     best = {start_state: 0}
     while queue:
+        if deadline is not None and clock() >= deadline:
+            raise SearchTimeout("space-time search deadline exceeded")
         _, cost, _, position, time = heappop(queue)
         state = (position, time)
         if cost != best.get(state):

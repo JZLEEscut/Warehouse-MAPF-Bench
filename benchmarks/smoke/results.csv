@@ -1,0 +1,46 @@
+source,map_id,scenario_id,selection_row_ids,instance_id,algorithm,seed,num_agents,outcome,success,valid,timed_out,runtime_ms,sum_of_costs,makespan,conflicts,validation_error,failure_reason,expanded_nodes,limit_seconds
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n5:seed0,independent_astar,0,5,solved,True,True,False,1.802,69.0,24.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n5:seed0,prioritized,0,5,solved,True,True,False,51.272,69.0,24.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n5:seed0,cbs,0,5,solved,True,True,False,5.755,69.0,24.0,0,,,1,0.6
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n5:seed1,independent_astar,1,5,solved,True,True,False,2.106,62.0,18.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n5:seed1,prioritized,1,5,solved,True,True,False,11.687,62.0,18.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n5:seed1,cbs,1,5,solved,True,True,False,2.049,62.0,18.0,0,,,1,0.6
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n5:seed2,independent_astar,2,5,solved,True,True,False,1.613,77.0,20.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n5:seed2,prioritized,2,5,solved,True,True,False,11.624,77.0,20.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n5:seed2,cbs,2,5,solved,True,True,False,2.915,77.0,20.0,0,,,1,0.6
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n5:seed3,independent_astar,3,5,solved,True,False,False,3.386,86.0,25.0,1,detected 1 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n5:seed3,prioritized,3,5,solved,True,True,False,11.69,86.0,25.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n5:seed3,cbs,3,5,solved,True,True,False,8.375,86.0,25.0,0,,,2,0.6
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n5:seed4,independent_astar,4,5,solved,True,False,False,2.109,74.0,26.0,1,detected 1 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n5:seed4,prioritized,4,5,solved,True,True,False,17.082,74.0,26.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n5:seed4,cbs,4,5,solved,True,True,False,14.385,74.0,26.0,0,,,2,0.6
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n10:seed0,independent_astar,0,10,solved,True,False,False,9.638,164.0,33.0,5,detected 5 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n10:seed0,prioritized,0,10,solved,True,True,False,55.139,174.0,33.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n10:seed0,cbs,0,10,solved,True,True,False,38.058,164.0,33.0,0,,,6,0.6
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n10:seed1,independent_astar,1,10,solved,True,False,False,5.1,150.0,29.0,3,detected 3 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n10:seed1,prioritized,1,10,solved,True,True,False,48.893,150.0,29.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n10:seed1,cbs,1,10,solved,True,True,False,51.841,150.0,29.0,0,,,8,0.6
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n10:seed2,independent_astar,2,10,solved,True,False,False,8.388,167.0,34.0,2,detected 2 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n10:seed2,prioritized,2,10,solved,True,True,False,103.008,181.0,34.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n10:seed2,cbs,2,10,solved,True,True,False,57.228,167.0,34.0,0,,,4,0.6
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n10:seed3,independent_astar,3,10,solved,True,False,False,6.039,181.0,30.0,4,detected 4 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n10:seed3,prioritized,3,10,solved,True,True,False,77.366,193.0,30.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n10:seed3,cbs,3,10,solved,True,True,False,50.572,181.0,30.0,0,,,7,0.6
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n10:seed4,independent_astar,4,10,solved,True,True,False,9.773,143.0,30.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n10:seed4,prioritized,4,10,solved,True,True,False,71.113,143.0,30.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n10:seed4,cbs,4,10,solved,True,True,False,19.557,143.0,30.0,0,,,1,0.6
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n15:seed0,independent_astar,0,15,solved,True,False,False,16.028,253.0,26.0,2,detected 2 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n15:seed0,prioritized,0,15,solved,True,True,False,201.736,255.0,26.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-0,-,synthetic-18x28:n15:seed0,cbs,0,15,solved,True,True,False,144.974,255.0,26.0,0,,,8,0.6
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n15:seed1,independent_astar,1,15,solved,True,False,False,14.738,299.0,33.0,7,detected 7 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n15:seed1,prioritized,1,15,solved,True,True,False,173.534,301.0,33.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-1,-,synthetic-18x28:n15:seed1,cbs,1,15,timeout,False,False,True,600.429,,,0,,timeout,65,0.6
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n15:seed2,independent_astar,2,15,solved,True,False,False,16.294,272.0,34.0,10,detected 10 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n15:seed2,prioritized,2,15,solved,True,True,False,149.957,272.0,34.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-2,-,synthetic-18x28:n15:seed2,cbs,2,15,timeout,False,False,True,604.159,,,0,,timeout,64,0.6
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n15:seed3,independent_astar,3,15,solved,True,False,False,10.29,197.0,28.0,10,detected 10 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n15:seed3,prioritized,3,15,solved,True,True,False,159.311,206.0,28.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-3,-,synthetic-18x28:n15:seed3,cbs,3,15,timeout,False,False,True,603.792,,,0,,timeout,85,0.6
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n15:seed4,independent_astar,4,15,solved,True,False,False,8.309,185.0,25.0,3,detected 3 conflicts,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n15:seed4,prioritized,4,15,solved,True,True,False,155.822,194.0,26.0,0,,,0,
+synthetic,synthetic-warehouse-18x28,seed-4,-,synthetic-18x28:n15:seed4,cbs,4,15,solved,True,True,False,91.265,187.0,25.0,0,,,13,0.6
