@@ -1,0 +1,7 @@
+source,algorithm_a,algorithm_b,attempts_per_variant,valid_a,valid_b,paired_valid_runs,paired_unique_instances,median_paired_runtime_a_ms,median_paired_runtime_b_ms,median_paired_expanded_a,median_paired_expanded_b,median_soc_delta_a_minus_b
+synthetic,cbs_manhattan,cbs_static,45,36,36,36,12,32.067499999999995,50.135,1414.5,1312.5,0.0
+case,cbs_manhattan,cbs_static,9,9,9,9,3,0.834,0.799,44.0,44.0,0.0
+synthetic,pp_manhattan,pp_static,45,45,45,45,15,100.715,101.517,678.0,601.0,0.0
+case,pp_manhattan,pp_static,9,3,3,3,1,0.235,0.331,7.0,7.0,0.0
+synthetic,pp_static,pp_longest_static,45,45,45,45,15,101.517,121.957,601.0,968.0,-1.0
+case,pp_static,pp_longest_static,9,3,6,3,1,0.331,0.337,7.0,7.0,0.0

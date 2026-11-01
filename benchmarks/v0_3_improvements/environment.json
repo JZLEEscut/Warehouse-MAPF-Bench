@@ -1,0 +1,113 @@
+{
+  "recorded_at_utc": "2026-11-01T13:53:18.412809+00:00",
+  "git_commit": "ebdfbe45346ecbc5d2f413471a82b1486e41c2e2",
+  "git_worktree_status": "",
+  "python": "3.11.5",
+  "system": "Windows",
+  "system_release": "10",
+  "machine": "AMD64",
+  "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+  "dependencies": {
+    "warehouse-mapf-bench": "0.3.0",
+    "matplotlib": "3.10.8",
+    "pandas": "2.2.3",
+    "pillow": "12.3.0",
+    "pytest": "9.1.1"
+  },
+  "argv": [
+    "improvement_study.py"
+  ],
+  "parameters": {
+    "repetitions": 3,
+    "seeds": 5,
+    "timeout_seconds": 0.6,
+    "counts": [
+      5,
+      10,
+      15
+    ],
+    "cases": [
+      "corridor",
+      "crossing",
+      "goal_hold"
+    ],
+    "variants": {
+      "cbs_manhattan": [
+        "cbs",
+        "manhattan",
+        "input"
+      ],
+      "cbs_static": [
+        "cbs",
+        "static",
+        "input"
+      ],
+      "pp_manhattan": [
+        "pp",
+        "manhattan",
+        "input"
+      ],
+      "pp_static": [
+        "pp",
+        "static",
+        "input"
+      ],
+      "pp_longest_static": [
+        "pp",
+        "static",
+        "longest_first"
+      ]
+    },
+    "order_seed": 2026,
+    "cache_policy": "new per-solve cache; preprocessing included in runtime; no cross-run reuse",
+    "horizon_policy": "grid area + 10, identical across compared variants",
+    "instance_ids": [
+      "synthetic-18x28:n5:seed0",
+      "synthetic-18x28:n5:seed1",
+      "synthetic-18x28:n5:seed2",
+      "synthetic-18x28:n5:seed3",
+      "synthetic-18x28:n5:seed4",
+      "synthetic-18x28:n10:seed0",
+      "synthetic-18x28:n10:seed1",
+      "synthetic-18x28:n10:seed2",
+      "synthetic-18x28:n10:seed3",
+      "synthetic-18x28:n10:seed4",
+      "synthetic-18x28:n15:seed0",
+      "synthetic-18x28:n15:seed1",
+      "synthetic-18x28:n15:seed2",
+      "synthetic-18x28:n15:seed3",
+      "synthetic-18x28:n15:seed4",
+      "case:corridor",
+      "case:crossing",
+      "case:goal_hold"
+    ]
+  },
+  "source_sha256": {
+    "__init__.py": "fc89334b555b17025c917d28a12fa7377bde7c4f18e3274d9631af0b4625094d",
+    "aggregate_benchmarks.py": "66e69ee9e0d0580420802a5c597d4ec0337afd758ac62d87265cb13112238fea",
+    "astar.py": "3d1d89d91f385fa66d70ae0be92d4120021b39d3d73dda377a4f69df5711d747",
+    "benchmark.py": "a44d0a14eb65f3718702febb6a47064d0a3d63f2a26e6bc0313b7ec7e654ca4d",
+    "cases.py": "4b01625c88ec2c0b390d6063547a95b2781a67b99703f3eefa29ab1edf346ea8",
+    "cbs.py": "e816667155da0c724896b100e953927505516d61c4598e13af747b5c77f05d73",
+    "conflicts.py": "553c49865201e0ff3cd5bf3913528e30ddac43616972a81153c846bb9c77f2bb",
+    "demo.py": "33274b21a5e1b35333ee0fe79276b42daac1baac5f8bdcbbd15a4223ec3d31fd",
+    "grid.py": "484df6c3440374f4b691bd00f0ad7b6d22341d928b0d269ed5a4ece99a4791ef",
+    "improvement_study.py": "14c1208e7e67570c5e9a4f624fe9ad038008136991dd9d6fbac913abaa2a9496",
+    "metrics.py": "3b540d25b54ab7a32939469bd4fdd8e5bc88b9b38a44817089f200a86d05d084",
+    "models.py": "5704fde4b15ffc0b9ad0d2fea86c0a30299f7e58c85e63b0b63a77efb334c614",
+    "movingai.py": "c01400da4f69b0cf75aa7375f93eb1a34f14635f24a0d502a6fd0f6441d51a37",
+    "prioritized.py": "624ccd186cf01fae77c57394f9043e3329a89b9a5e8b51ea7f7bc1d92e008874",
+    "provenance.py": "bbede71aa71ef945d5f9a649ef5cdf9033cade150aacf1f9c1979157028551c5",
+    "replay.py": "1c61f308a7d2f0ee391f6026e98469ca007c32520710da24f67605bbbe763d47",
+    "reporting.py": "1a80c025cb5477cacca38aaf9d2985469b2bde50be155f9666e740b11b1a0ddf",
+    "scenarios.py": "bf0b56e69b407f989531594f389529047f2b1e6a8c993449907e295e15ba149f",
+    "search_support.py": "6e4c5097be18e78b5da0a2a8e7aab535ec7f57eb5af8964d1868d26dfe75bc75",
+    "space_time_astar.py": "9d629f195ddb4af9759c9cbcf2bda6721067068b5088d1e277a69f939ffbf7af",
+    "standard_benchmark.py": "23dda1570e4a44cb26e2e01a3ce559e8b2d80d77ca6933aa6835a5d77395215a",
+    "validation.py": "868e201cf828d55dff3dd58eb306a6be3dd0e9b4733f060d7b920f51e24331ae",
+    "visualization.py": "18f2dd30f2dbba9da067d1f6d90fd653c90d3f7eace49e6f8b4251fe0ad0bed9",
+    "web/index.html": "95ecbb33be13be78ee5b4a1a442b39a3b3adbc84e5363f1d44e2063e2bfc52dc",
+    "web_demo.py": "09c82d3b8946ac5ff0c06a363de92b2cfe3a1fc4e57746ec2f066971c9709388"
+  },
+  "timing": "perf_counter wall time; includes preprocessing and solver validation; excludes reporting/rendering"
+}

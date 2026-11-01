@@ -1,4 +1,4 @@
-# Warehouse-MAPF-Bench v0.2
+# Warehouse-MAPF-Bench v0.3
 
 **自动化仓储多智能体路径规划的可复现配对基准 / A reproducible paired benchmark for warehouse Multi-Agent Path Finding**
 
@@ -7,6 +7,40 @@
 本项目在 Python 中自主实现 A*、Space-Time A*、Prioritized Planning 和 Conflict-Based Search（CBS），并使用独立验证器、明确的结果分类、配对有效实例统计，以及合成仓储和官方 Moving AI 仓储数据进行可复现实验。
 
 This project implements A*, Space-Time A*, Prioritized Planning, and Conflict-Based Search (CBS) locally in Python, with independent validation, explicit outcome categories, paired-valid quality analysis, and reproducible synthetic plus official Moving AI warehouse experiments.
+
+### v0.3：交互演示与可测量的改进 / Interactive demo and measured changes
+
+```bash
+python -m pip install -e ".[dev]"
+python -m warehouse_mapf.web_demo
+```
+
+在浏览器打开 **http://127.0.0.1:8765**。选择算法、固定案例或合成仓储，播放、暂停、单步并拖动时间轴；页面显示真实轨迹、目标、当前冲突以及独立验证结果。固定案例使用预设车辆数，合成仓储可调整车辆数和 seed。演示服务仅监听本机，退出使用 Ctrl+C。
+
+Open **http://127.0.0.1:8765** for live solver selection, playback, stepping, a timeline, labeled agents/goals, conflict highlights and independent validation. Fixed cases use preset agents; the synthetic warehouse supports agent-count and seed controls. The server listens on loopback only; stop it with Ctrl+C.
+
+- 可选反向 BFS 静态距离启发式，单次求解内按目标复用；默认仍为 Manhattan。Optional reverse-BFS distances with a per-solve goal cache; Manhattan remains the default.
+- 记录底层调用、扩展、预计算耗时和缓存命中；预计算包含在求解耗时及 deadline 内。Search instrumentation counts calls, expansions, preprocessing and cache hits; preprocessing is included in runtime and deadlines.
+- 新增 Longest-first 优先级及窄通道、交叉口、目标占用案例。Adds longest-first priorities and three diagnostic cases.
+- 修复短 horizon 被误报为不可解的边界，并处理目标点未来 WAIT 边约束。Distinguishes a short horizon from impossibility and honors future goal-WAIT edge constraints.
+
+复现实验 / Reproduce the ablation:
+
+```bash
+python -m warehouse_mapf.improvement_study
+```
+
+默认共 270 次尝试：15 个合成实例 + 3 个固定案例，5 个算法配置，各重复 3 次，统一 0.6 秒预算。重复运行与独立实例数分别报告；静态启发式没有被预设为更快。原始结果、配对表、案例回放和带源码哈希的环境记录见 [v0.3 实验目录](benchmarks/v0_3_improvements/)，分析见 [实验说明](docs/EXPERIMENTS.md#v03-improvement-study)。
+
+The default study contains 270 attempts: 15 synthetic instances plus 3 diagnostic cases, five variants, three repetitions, with a shared 0.6-second budget. Repetitions and unique instances are reported separately. Raw results, paired tables, case replays and environment/source hashes are committed; faster performance is evaluated rather than assumed.
+
+本次配对合成实验中，静态 BFS 减少了底层扩展，但计入预计算后没有降低中位总耗时，因此保留 Manhattan 默认值。Longest-first 解决了目标占用案例，却没有普遍改善合成实例的 SOC。具体分母、数值与局限见实验说明。
+
+In the recorded paired synthetic comparisons, static BFS reduced expansions but did not reduce median wall time once preprocessing was included. Longest-first solved the held-goal counterexample but did not generally improve synthetic SOC. The experiment report provides the denominators, measurements and limits.
+
+![v0.3 ablation](assets/improvement_ablation.png)
+
+[设计与取舍 / Design decisions](docs/DESIGN.md) · [面试讲解 / Interview walkthrough](docs/INTERVIEW.md)
 
 ![Warehouse MAPF demo](assets/demo.gif)
 
@@ -73,6 +107,8 @@ python -m warehouse_mapf.standard_benchmark \
 ```
 
 ### 较大合成实验结果
+
+以下为 v0.2 历史实验记录；v0.3 对照实验单独存放，避免混合不同版本的耗时。
 
 配置：18 × 28 确定性合成仓储地图，5/10/15/20 台 AGV，每个规模 seeds 0–9，共 120 次算法尝试。运行级数据、汇总和配对明细位于 [`benchmarks/synthetic_larger/`](benchmarks/synthetic_larger/)。
 
@@ -175,6 +211,8 @@ python -m warehouse_mapf.standard_benchmark \
 ```
 
 ### Recorded findings
+
+The following are historical v0.2 measurements. The v0.3 ablation is stored separately to avoid mixing timings across code versions.
 
 The larger synthetic experiment contains 120 attempts over 5/10/15/20 agents and seeds 0–9. Prioritized Planning validated on all 40 instances. CBS validated on 10/10, 10/10, 6/10, and 1/10 instances respectively, with 4 timeouts at 15 agents and 9 at 20 agents. Paired-valid sample counts are therefore 10, 10, 6, and 1—not the full denominator at the larger scales. Median per-instance SOC deltas are 0, 0, +7.5, and +13; the last value is based on one instance and is not a general quality claim.
 

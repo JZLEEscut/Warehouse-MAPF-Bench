@@ -16,3 +16,22 @@ without hitting configured time, expansion, or horizon limits.
 
 The independent validator checks endpoints, legal motion, obstacles, vertex
 collisions, and edge swaps without relying on solver internals.
+
+## v0.3 optional search improvements
+
+`solve_cbs(..., heuristic="static")` and `solve_prioritized(..., heuristic="static")`
+use exact static distances from reverse BFS as admissible, consistent lower bounds.
+Each solver owns a grid-bound goal cache; repeated CBS low-level replans reuse it,
+but separate solves do not. Manhattan remains the default. Preprocessing is counted
+in runtime and shares the search deadline. Metadata separates `low_level_calls`,
+`low_level_expanded`, `precompute_ms`, `precompute_cells`, and `distance_cache_hits`
+from CBS high-level `expanded_nodes`.
+
+`solve_prioritized(..., order="longest_first", timeout_s=...)` stably orders agents
+by descending static shortest distance. This changes priority only; it does not
+provide completeness or global optimality. Its BFS ordering cost is included.
+
+For CBS root failure, static reachability is checked within the remaining deadline:
+reachable-but-cutoff is `no_solution_within_limits`, disconnected is `no_solution`,
+and interruption of that check is `timeout`. Goal acceptance also considers future
+goal-to-goal WAIT edge constraints, because returned goals are held permanently.
