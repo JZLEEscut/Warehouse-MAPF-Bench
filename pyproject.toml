@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "warehouse-mapf-bench"
-version = "0.2.0"
+version = "0.3.0"
 description = "Reproducible paired MAPF benchmarks on synthetic and Moving AI warehouse grids"
 requires-python = ">=3.11"
 dependencies = [
@@ -21,9 +21,14 @@ warehouse-mapf-demo = "warehouse_mapf.demo:main"
 warehouse-mapf-benchmark = "warehouse_mapf.benchmark:main"
 warehouse-mapf-standard = "warehouse_mapf.standard_benchmark:main"
 warehouse-mapf-aggregate = "warehouse_mapf.aggregate_benchmarks:main"
+warehouse-mapf-web = "warehouse_mapf.web_demo:main"
+warehouse-mapf-study = "warehouse_mapf.improvement_study:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+warehouse_mapf = ["web/*.html"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

@@ -20,6 +20,7 @@ from .prioritized import solve_prioritized
 from .reporting import paired_valid_details, summarize_paired, summarize_runs
 from .scenarios import make_warehouse_grid, sample_problem
 from .validation import validate_solution
+from .provenance import write_environment
 
 RUN_COLUMNS = [
     "source", "map_id", "scenario_id", "selection_row_ids", "instance_id",
@@ -148,6 +149,9 @@ def run_instances(instances: list[BenchmarkInstance], *, output_dir: str | Path,
     results = pd.DataFrame(records, columns=RUN_COLUMNS)
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
+    write_environment(destination, {"cbs_timeout": cbs_timeout,
+                                   "instance_ids": [i.instance_id for i in instances],
+                                   "algorithms": ["independent_astar", "prioritized", "cbs"]})
     results.to_csv(destination / "results.csv", index=False)
     summary = summarize_runs(results)
     summary.to_csv(destination / "summary.csv", index=False)

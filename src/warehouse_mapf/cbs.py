@@ -10,6 +10,7 @@ from .metrics import sum_of_costs
 from .models import EdgeConstraint, MAPFProblem, Position, Solution, VertexConstraint
 from .space_time_astar import SearchTimeout, space_time_astar
 from .validation import validate_solution
+from .search_support import DistanceCache, Heuristic, SearchStats
 
 Constraint = VertexConstraint | EdgeConstraint
 
@@ -42,10 +43,22 @@ def solve_cbs(
     max_expansions: int = 10_000,
     max_time: int | None = None,
     clock: Callable[[], float] = perf_counter,
+    heuristic: Heuristic = "manhattan",
 ) -> Solution:
     """Branch on conflicts while sharing one deadline with low-level searches."""
     started = clock()
     deadline = started + max(0.0, timeout_s)
+    stats = SearchStats()
+    cache = DistanceCache(problem.grid, stats)
+
+    def finish(**kwargs) -> Solution:
+        metadata = kwargs.pop("metadata", {})
+        metadata.update(stats.metadata())
+        metadata["heuristic"] = heuristic
+        # Includes preprocessing, search, and the solver's own validation.
+        kwargs["runtime_ms"] = max(0.0, (clock() - started) * 1000)
+        return Solution(metadata=metadata, **kwargs)
+
     horizon = max_time if max_time is not None else problem.grid.height * problem.grid.width + 10
     root_paths: dict[str, list[Position]] = {}
     try:
@@ -57,18 +70,20 @@ def solve_cbs(
                 max_time=horizon,
                 deadline=deadline,
                 clock=clock,
+                heuristic=heuristic, distance_cache=cache, stats=stats,
             )
             if path is None:
-                return Solution(
+                reachable = agent.start in cache.distances(agent.goal, deadline=deadline, clock=clock)
+                return finish(
                     paths={},
                     success=False,
                     runtime_ms=(clock() - started) * 1000,
-                    metadata={"failure_reason": f"unreachable:{agent.id}"},
-                    outcome="no_solution",
+                    metadata={"failure_reason": f"{'horizon_limit' if reachable else 'unreachable'}:{agent.id}"},
+                    outcome="no_solution_within_limits" if reachable else "no_solution",
                 )
             root_paths[agent.id] = path
     except SearchTimeout:
-        return Solution(
+        return finish(
             paths={},
             success=False,
             runtime_ms=max(0.0, (clock() - started) * 1000),
@@ -84,13 +99,13 @@ def solve_cbs(
     while queue:
         elapsed = clock() - started
         if clock() >= deadline:
-            return Solution(
+            return finish(
                 paths={}, success=False, runtime_ms=max(0.0, elapsed * 1000),
                 metadata={"failure_reason": "timeout", "expanded_nodes": expanded},
                 outcome="timeout", timed_out=True,
             )
         if expanded >= max_expansions:
-            return Solution(
+            return finish(
                 paths={}, success=False, runtime_ms=max(0.0, elapsed * 1000),
                 metadata={"failure_reason": "expansion_limit", "expanded_nodes": expanded},
                 outcome="no_solution_within_limits",
@@ -100,7 +115,7 @@ def solve_cbs(
         conflict = find_first_conflict(node.paths)
         if conflict is None:
             validation = validate_solution(problem, node.paths)
-            return Solution(
+            return finish(
                 paths=node.paths,
                 success=True,
                 runtime_ms=max(0.0, (clock() - started) * 1000),
@@ -131,9 +146,10 @@ def solve_cbs(
                     max_time=horizon,
                     deadline=deadline,
                     clock=clock,
+                    heuristic=heuristic, distance_cache=cache, stats=stats,
                 )
             except SearchTimeout:
-                return Solution(
+                return finish(
                     paths={}, success=False, runtime_ms=max(0.0, (clock() - started) * 1000),
                     metadata={"failure_reason": "timeout", "expanded_nodes": expanded},
                     outcome="timeout", timed_out=True,
@@ -143,7 +159,7 @@ def solve_cbs(
             child_paths = dict(node.paths)
             child_paths[agent.id] = path
             heappush(queue, CBSNode(sum_of_costs(child_paths), next(tickets), constraints, child_paths))
-    return Solution(
+    return finish(
         paths={}, success=False, runtime_ms=max(0.0, (clock() - started) * 1000),
         metadata={"failure_reason": "search_exhausted", "expanded_nodes": expanded},
         outcome="no_solution_within_limits",

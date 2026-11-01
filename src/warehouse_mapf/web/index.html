@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Warehouse MAPF · 路径规划实验室</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#182b3d;background:#f2f5f7;font-size:15px}*{box-sizing:border-box}body{margin:0}header{background:#122b3d;color:#fff;padding:24px max(24px,calc((100vw - 1240px)/2))}header small{color:#82cbd5;letter-spacing:.12em}h1{font-size:27px;margin:8px 0}header p{color:#c3d2de;margin:0;line-height:1.6}main{max-width:1288px;margin:24px auto;padding:0 24px}.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px}.panel{background:#fff;border:1px solid #dbe3e9;border-radius:12px;padding:20px}h2{font-size:17px;margin:0 0 18px}label{display:block;font-size:13px;font-weight:600;margin:17px 0 7px}select,input[type=number]{width:100%;border:1px solid #c4cfd8;border-radius:7px;padding:10px;background:#fff;color:inherit;font:inherit}button{border:1px solid #bfccd6;border-radius:7px;background:white;color:#213b50;padding:10px 14px;cursor:pointer;font:inherit}button:hover{background:#ecf4f7}button:disabled{opacity:.5;cursor:default}.primary{background:#127e8b;color:white;border-color:#127e8b;width:100%;margin-top:22px}.primary:hover{background:#096470}.hint{font-size:12px;color:#607486;line-height:1.7}.row{display:flex;gap:10px}.row>div{flex:1}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.metric{background:#f4f7f9;border-radius:8px;padding:12px}.metric small{display:block;color:#61778a;font-size:11px}.metric strong{display:block;margin-top:7px;font-size:21px;font-variant-numeric:tabular-nums}#status{padding:11px 14px;border-radius:7px;background:#edf5f6;line-height:1.6;font-size:13px;margin:12px 0}.bad{background:#fff0eb!important;color:#983a25}.good{color:#136b52}#board{width:100%;height:430px;background:#fafcfd;border-radius:8px;border:1px solid #e5ebf0}#board text{font-family:system-ui,sans-serif}.controls{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}#timeline{flex:1;min-width:100px;accent-color:#127e8b}#timeLabel{font-size:13px;font-variant-numeric:tabular-nums;min-width:70px}.legend{display:flex;gap:16px;flex-wrap:wrap;color:#61778a;font-size:12px;margin-top:13px}#description{font-size:13px;color:#526c80;line-height:1.7}details{border-top:1px solid #e2e9ee;margin-top:16px;padding-top:14px;font-size:13px}summary{cursor:pointer}#diagnostics{white-space:pre-wrap;line-height:1.7;color:#526c80}.footer{margin:18px 0;color:#607486;font-size:12px;line-height:1.7}a{color:#147d92}#agentsLabel{margin-top:0}@media(max-width:820px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}#board{height:350px}header{padding:20px 24px}main{padding:0 12px}}
+</style>
+</head>
+<body>
+<header><small>WAREHOUSE MAPF BENCH · v0.3</small><h1>路径规划实验室 / Planning Lab</h1><p>观察冲突、等待与绕行。在同一场景比较算法，并回放真实求解结果。</p></header>
+<main><div class="layout">
+<aside class="panel"><h2>实验配置 / Setup</h2><form id="setup">
+<label for="scenario">场景 / Scenario</label><select id="scenario"><option value="goal_hold">目标占用 · Goal holding</option><option value="corridor">窄通道会车 · Corridor</option><option value="crossing">交叉口 · Crossing</option><option value="warehouse">合成仓储 · Warehouse</option></select>
+<label for="solver">算法 / Solver</label><select id="solver"><option value="cbs_static">CBS · Static BFS</option><option value="cbs_manhattan">CBS · Manhattan</option><option value="pp_static">Prioritized · Static BFS</option><option value="pp_longest_static">Prioritized · Longest first + BFS</option><option value="pp_manhattan">Prioritized · Manhattan</option><option value="independent_astar">Independent A* · 冲突基线</option></select>
+<div class="row"><div><label for="agents">车辆数 / Agents</label><input id="agents" type="number" min="1" max="25" value="8"></div><div><label for="seed">随机种子 / Seed</label><input id="seed" type="number" min="0" max="1000000" value="17"></div></div>
+<p class="hint">车辆数和种子仅用于合成仓储。固定案例使用预设起终点。CBS 与 Prioritized 的求解预算均为 2 秒，包含预计算。</p><button id="solve" class="primary" type="submit">运行规划 / Solve</button></form>
+<p id="description"></p><p class="hint">建议：先在“目标占用”场景选择输入顺序的 Prioritized，再尝试 Longest first。到达目标后的车辆会持续占用目标格。</p></aside>
+<section class="panel" aria-label="Replay"><div class="metrics"><div class="metric"><small>求解耗时 / Runtime</small><strong id="runtime">—</strong></div><div class="metric"><small>路径成本 / SOC</small><strong id="soc">—</strong></div><div class="metric"><small>完成时间 / Makespan</small><strong id="makespan">—</strong></div><div class="metric"><small>冲突数 / Conflicts</small><strong id="conflicts">—</strong></div></div>
+<div id="status" role="status" aria-live="polite">正在加载默认案例…</div>
+<svg id="board" role="img" aria-label="栅格地图、目标与车辆轨迹"></svg>
+<div class="controls"><button id="play" disabled>播放 / Play</button><button id="step" disabled>单步 / Step</button><button id="reset" disabled>重置</button><input id="timeline" aria-label="时间步 / Timestep" type="range" min="0" max="0" value="0" disabled><span id="timeLabel">t = 0 / 0</span></div>
+<div class="legend"><span>● 车辆（字母编号）</span><span>◇ 对应颜色的目标</span><span style="color:#b44030">红圈 / 红线：当前顶点 / 边交换冲突</span></div>
+<details><summary>搜索统计与验证 / Diagnostics</summary><div id="diagnostics"></div></details></section>
+</div><p class="footer">离散四邻接栅格，包含等待动作。页面轨迹来自本地 Python 求解器与独立验证器；部分路径和冲突基线不代表可执行方案。<a href="https://github.com/JZLEEscut/Warehouse-MAPF-Bench" target="_blank" rel="noreferrer">源码与实验 / Repository ↗</a></p></main>
+<script>
+const $=id=>document.getElementById(id), colors=['#137eab','#c36329','#247b57','#8757a0','#aa485e','#596db8','#817329','#317f7e'];
+let data=null,time=0,timer=null;
+function stop(){clearInterval(timer);timer=null;$('play').textContent='播放 / Play';}
+function position(path,t){return path[Math.min(t,path.length-1)];}
+function element(tag,attrs,text){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
+function draw(){
+  const svg=$('board');svg.replaceChildren();if(!data)return;
+  const g=data.grid,cell=32,pad=24;svg.setAttribute('viewBox',`0 0 ${g.width*cell+2*pad} ${g.height*cell+2*pad}`);
+  const add=(tag,attrs,text)=>svg.appendChild(element(tag,attrs,text));
+  for(let r=0;r<g.height;r++)for(let c=0;c<g.width;c++)add('rect',{x:pad+c*cell,y:pad+r*cell,width:cell,height:cell,fill:'#f1f6f9',stroke:'#dbe5ec','stroke-width':.6});
+  for(const [r,c] of g.obstacles)add('rect',{x:pad+c*cell,y:pad+r*cell,width:cell,height:cell,fill:'#334c60'});
+  data.agents.forEach((a,i)=>{const color=colors[i%colors.length],path=data.paths[a.id],xy=p=>[pad+(p[1]+.5)*cell,pad+(p[0]+.5)*cell];
+    if(path)add('polyline',{points:path.map(p=>xy(p).join(',')).join(' '),fill:'none',stroke:color,'stroke-opacity':.3,'stroke-width':2});
+    const [gx,gy]=xy(a.goal);add('path',{d:`M ${gx} ${gy-9} L ${gx+9} ${gy} L ${gx} ${gy+9} L ${gx-9} ${gy} Z`,fill:'none',stroke:color,'stroke-width':2});
+    const [x,y]=xy(path?position(path,time):a.start);add('circle',{cx:x,cy:y,r:10,fill:color,stroke:'#fff','stroke-width':1.5});add('text',{x,y:y+3.5,'text-anchor':'middle',fill:'#fff','font-size':9,'font-weight':700},a.id);
+  });
+  for(const conflict of data.conflicts.filter(c=>c.time===time)){
+    if(conflict.kind==='vertex'){const [r,c]=conflict.position;add('circle',{cx:pad+(c+.5)*cell,cy:pad+(r+.5)*cell,r:14,fill:'none',stroke:'#d5382e','stroke-width':3});}
+    else{const [a,b]=conflict.edge1;add('line',{x1:pad+(a[1]+.5)*cell,y1:pad+(a[0]+.5)*cell,x2:pad+(b[1]+.5)*cell,y2:pad+(b[0]+.5)*cell,stroke:'#d5382e','stroke-width':5,'stroke-dasharray':'4 3'});}
+  }
+  $('timeline').value=time;$('timeLabel').textContent=`t = ${time} / ${data.replay_steps}`;
+}
+async function solve(event){
+  if(event)event.preventDefault();stop();data=null;time=0;draw();
+  ['play','step','reset','timeline','solve'].forEach(id=>$(id).disabled=true);
+  ['runtime','soc','makespan','conflicts'].forEach(id=>$(id).textContent='—');$('diagnostics').textContent='';
+  $('status').className='';$('status').textContent='正在规划 / Solving…';
+  const q=new URLSearchParams();['scenario','solver','agents','seed'].forEach(id=>q.set(id,$(id).value));
+  try{
+    const response=await fetch('/api/solve?'+q);const result=await response.json();if(!response.ok)throw Error(result.error||'Request failed');data=result;
+    $('runtime').textContent=data.runtime_ms.toFixed(1)+' ms';$('soc').textContent=data.sum_of_costs??'—';$('makespan').textContent=data.makespan??'—';$('conflicts').textContent=data.conflicts.length;
+    $('description').textContent=data.description;
+    $('status').className=data.valid?'good':'bad';
+    $('status').textContent=data.valid?'已通过独立验证 / Validated · '+data.solver:(!data.success?'未返回完整有效方案 / '+data.outcome+' · 部分轨迹仅供诊断':'完整路径存在冲突 / Invalid baseline · 请勿执行');
+    $('diagnostics').textContent=JSON.stringify({outcome:data.outcome,valid:data.valid,limit_seconds:data.limit_seconds,...data.metadata,validation_errors:data.validation_errors},null,2);
+    $('timeline').max=data.replay_steps;['play','step','reset','timeline'].forEach(id=>$(id).disabled=data.replay_steps===0);draw();
+  }catch(error){$('status').className='bad';$('status').textContent='运行失败 / Error: '+error.message;}
+  finally{$('solve').disabled=false;}
+}
+$('setup').addEventListener('submit',solve);
+$('timeline').addEventListener('input',()=>{stop();time=Number($('timeline').value);draw();});
+$('step').addEventListener('click',()=>{stop();time=Math.min(time+1,data.replay_steps);draw();});
+$('reset').addEventListener('click',()=>{stop();time=0;draw();});
+$('play').addEventListener('click',()=>{if(timer){stop();return;}if(time>=data.replay_steps)time=0;$('play').textContent='暂停 / Pause';draw();timer=setInterval(()=>{time++;draw();if(time>=data.replay_steps)stop();},350);});
+function toggleInputs(){const fixed=$('scenario').value!=='warehouse';$('agents').disabled=fixed;$('seed').disabled=fixed;}
+$('scenario').addEventListener('change',toggleInputs);toggleInputs();solve();
+</script></body></html>

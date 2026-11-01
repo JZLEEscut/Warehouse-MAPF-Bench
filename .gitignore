@@ -3,6 +3,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.egg-info/
+build/
+dist/
 warehouse_mapf_codex_handoff/
 data/movingai/*.zip
 data/movingai/scen-even/
